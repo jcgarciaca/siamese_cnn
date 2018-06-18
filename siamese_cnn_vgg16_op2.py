@@ -1,8 +1,4 @@
-
 # coding: utf-8
-
-# In[1]:
-
 
 import numpy as np
 import random
@@ -26,9 +22,6 @@ from sklearn.metrics import accuracy_score
 
 
 np.random.seed(1337)  # for reproducibility
-
-
-# In[2]:
 
 
 # convolutional base
@@ -55,9 +48,7 @@ for layer in conv_base.layers:
 conv_base.summary()
 
 
-# In[3]:
-
-
+# create dataset
 def create_data_siamese_from_images(path1, path2, data_size):
     set1 = []
     set2 = []
@@ -68,21 +59,12 @@ def create_data_siamese_from_images(path1, path2, data_size):
     # true pairs
     images_in_path1 = os.listdir(path1)    
     images_in_path2 = os.listdir(path2)
-        
-    # print("len(images_in_path1): ", len(images_in_path1))
-    
-    # np.random.shuffle(images_in_path1)
-    
-    # print(np.random.randint(0, len(images_in_path1) - 1))
-    
     
     for i in range(data_size):
         
         # true data C1
         index1 = np.random.randint(0, len(images_in_path1) - 1)
         index2 = np.random.randint(0, len(images_in_path1) - 1)        
-        # print("image1: ", images_in_path1[index1])
-        # print("image2: ", images_in_path1[index2])
         img1 = io.imread(os.path.join(path1, images_in_path1[index1]))
         img2 = io.imread(os.path.join(path1, images_in_path1[index2]))                
         img1 = resize(img1, (WIDTH, HEIGHT), anti_aliasing = True)
@@ -95,8 +77,6 @@ def create_data_siamese_from_images(path1, path2, data_size):
         # true data C2
         index1 = np.random.randint(0, len(images_in_path2) - 1)
         index2 = np.random.randint(0, len(images_in_path2) - 1)        
-        # print("image1: ", images_in_path2[index1])
-        # print("image2: ", images_in_path2[index2])
         img1 = io.imread(os.path.join(path2, images_in_path2[index1]))
         img2 = io.imread(os.path.join(path2, images_in_path2[index2]))                
         img1 = resize(img1, (WIDTH, HEIGHT), anti_aliasing = True)
@@ -110,8 +90,6 @@ def create_data_siamese_from_images(path1, path2, data_size):
         # false data 1
         index1 = np.random.randint(0, len(images_in_path1) - 1)
         index2 = np.random.randint(0, len(images_in_path2) - 1)        
-        # print("image1: ", images_in_path1[index1])
-        # print("image2: ", images_in_path2[index2])
         
         if(i%2 == 0):
             img1 = io.imread(os.path.join(path1, images_in_path1[index1]))
@@ -130,8 +108,6 @@ def create_data_siamese_from_images(path1, path2, data_size):
         # false data 2
         index1 = np.random.randint(0, len(images_in_path1) - 1)
         index2 = np.random.randint(0, len(images_in_path2) - 1)        
-        # print("image1: ", images_in_path1[index1])
-        # print("image2: ", images_in_path2[index2])
         
         if(i%2 == 0):
             img1 = io.imread(os.path.join(path1, images_in_path1[index1]))
@@ -158,9 +134,6 @@ def binarize_predictions(pred, threshold):
             bin_predictions.append(0.0)
     
     return(bin_predictions)
-
-
-# In[4]:
 
 
 # the data split between train and test sets
@@ -228,9 +201,6 @@ model.summary()
 
 nb_epochs = 2
 
-#model.fit([tr_set1, tr_set2], tr_y)
-
-
 history = model.fit([tr_set1, tr_set2], tr_y,
           validation_data=([te_set1, te_set2], te_y),
           batch_size=1,
@@ -256,9 +226,6 @@ print("pred_bin: ", pred_bin)
 tr_acc = accuracy_score(pred_bin, tr_y)
 
 
-# In[ ]:
-
-
 threshold = 0.7
 
 pred = model.predict([te_set1, te_set2])
@@ -274,9 +241,6 @@ te_acc = accuracy_score(pred_bin, te_y)
 
 print('* Accuracy on training set: %0.2f%%' % (100 * tr_acc))
 print('* Accuracy on test set: %0.2f%%' % (100 * te_acc))
-
-
-# In[29]:
 
 
 acc = history.history['acc']
